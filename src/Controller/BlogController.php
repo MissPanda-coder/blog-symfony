@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Articles;
+use App\Repository\ArticlesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,9 +18,9 @@ class BlogController extends AbstractController
         $this->entityManager = $entityManager;
     }
     #[Route('/blog', name: 'app_blog')]
-    public function index(): Response
+    public function index(ArticlesRepository $repo): Response
     {
-        $repo = $this->entityManager->getRepository(Articles::class);
+       
         $articles = $repo->findAll();
         return $this->render('blog/index.html.twig', [
             'controller_name' => 'BlogController',
@@ -31,9 +32,12 @@ class BlogController extends AbstractController
         return $this->render('blog/home.html.twig');
     }
 
-    #[Route('/blog/article/1', name: 'blog_show')]
-    public function show()
+    #[Route('/blog/article/{id}', name: 'blog_show')]
+    public function show(Articles $article)
     {
-        return $this->render('blog/show.html.twig');
+
+        return $this->render('blog/show.html.twig', [
+            'article' => $article
+        ]);
     }
 }
